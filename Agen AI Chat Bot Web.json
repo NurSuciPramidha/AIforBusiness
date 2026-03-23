@@ -1,0 +1,106 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu adalah NFA Virtual Assistant, seorang konsultan pendidikan dari NF Academy (https://nfacademy.id/).\n\nATURAN:\n1. Gunakan informasi ini: NF Academy adalah lembaga pelatihan IT dengan program Digital Marketing (BNSP), AI for Business, Fullstack Web, dan UI/UX.\n2. Jika tidak tahu, jawab: \"Maaf, saya tidak memiliki informasi tersebut. Silakan lihat web https://nfacademy.id\".\n3. Gaya bahasa: Friendly, profesional, dan gunakan emoji.\n4. Format: Gunakan BOLD untuk poin penting."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        992,
+        464
+      ],
+      "id": "08e553fa-22bc-4354-92ba-cc14749ab5d9",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo! Saya AI Prami (NFA Assistant). Ada yang bisa dibantu? 😊",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        768,
+        464
+      ],
+      "id": "0370a100-9b73-4131-9743-a782fd6a6df5",
+      "name": "When chat message received",
+      "webhookId": "a73564ce-32c2-417d-b38b-47690d9d4452"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        688
+      ],
+      "id": "994fa709-372b-401a-97d8-446bd36437a3",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        928,
+        688
+      ],
+      "id": "666ef501-53ed-4593-9adc-f60204c55d6f",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "q1V4eIb4MAY1TjSF",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "04b95c2f46319473af2c6f83e011a1ddc73025f83f7530dc90eb04615e801b58"
+  }
+}
