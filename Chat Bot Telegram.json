@@ -1,0 +1,254 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "689fd812-7b42-4cc4-b540-255086b2939a",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -272,
+        1872
+      ],
+      "webhookId": "20ec871e-1342-4214-bd73-3565d9eeb41b",
+      "credentials": {
+        "telegramApi": {
+          "id": "OrVOckaYs7PxxLt4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "chat_id",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "chat",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f1b10073-3219-4e4e-930c-277101922002",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -64,
+        1872
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.chat }}",
+              "rightValue": "SEO|Marketing|Digital|SDM",
+              "operator": "regex"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "45543c58-b213-4688-87a4-dd76bdaedc04",
+      "name": "IF - Validasi Keyword",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        176,
+        1872
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chat }}",
+        "options": {
+          "systemMessage": "Anda adalah Asisten Pakar. \n\nATURAN PENGGUNAAN TOOL:\n1. Jika user bertanya tentang SEO, Marketing, atau SDM, GUNAKAN tool 'Database_Marketing' terlebih dahulu.\n2. SAAT MEMANGGIL TOOL, Anda DILARANG KERAS mengirimkan parameter apa pun (seperti 'jenis', 'tujuan', 'range', dll). Cukup panggil dengan objek kosong {}.\n3. Cari SATU baris paling relevan dari data tool. Jangan berikan daftar panjang.\n\nATURAN FALLBACK:\n4. Jika data TIDAK ditemukan di tool atau pertanyaan di luar topik database, jawablah menggunakan pengetahuan internal Anda sendiri.\n5. Jangan katakan 'Maaf saya tidak tahu' jika Anda punya pengetahuan umum tentang topik tersebut."
+        }
+      },
+      "id": "63e261d6-ff36-4efa-b648-0651232fc993",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        432,
+        1680
+      ]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "0a2b20fb-c6b2-478e-9436-8a6183f6c3eb",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        432,
+        1984
+      ],
+      "credentials": {
+        "groqApi": {
+          "id": "q1V4eIb4MAY1TjSF",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Telegram Trigger\"].json.message.chat.id }}",
+        "text": "={{ $json.output ?? \"Maaf, saya sedang mengalami gangguan koneksi.\" }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "e1f73f24-37d3-4072-bfa1-42a2bd004496",
+      "name": "Telegram Send",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        896,
+        1872
+      ],
+      "webhookId": "7d71e185-22de-44a9-b618-3d42980be1df",
+      "credentials": {
+        "telegramApi": {
+          "id": "OrVOckaYs7PxxLt4",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1REUInvAFN6gfcMea3Q_2PxNciE0UHgxH7kRxN4PPDKo/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        592,
+        1824
+      ],
+      "id": "addb8e89-e5b2-4ecc-8fa6-817ec24a18d3",
+      "name": "Database_Marketing",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "iGrHos0duFyJ0R1v",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "IF - Validasi Keyword",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF - Validasi Keyword": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram Send",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram Send",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Database_Marketing": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "04b95c2f46319473af2c6f83e011a1ddc73025f83f7530dc90eb04615e801b58"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "41f743c4-ad0e-4c5d-9e05-763987bd01a0",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "1492595082",
+        "text": "=❌ *Workflow Error Detected*  \n\n⚙️ *Nama Workflow:* \n{{ $json.workflow.name }}  \n\n🕒 *Waktu Eksekusi:*\n{{ $now }}  \n\n🧩 *Node Penyebab Error:* \n{{ $json.execution.lastNodeExecuted }}  \n\n📄 *Tipe Error:* \n{{ $json.execution.error.description }} \n\n📩 *Pesan Error:* \n{{ $json.execution.error.message }}  \n\n🔗 *Link Eksekusi:* \n{{ $json.execution.url }} \n\nSilakan cek workflow untuk investigasi lebih lanjut. ",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "36c21d57-176a-4854-bd7c-3dd1dfd3a1c8",
+      "name": "Send a text message",
+      "webhookId": "7c267ca9-9893-4076-b861-c1af73960976",
+      "credentials": {
+        "telegramApi": {
+          "id": "OrVOckaYs7PxxLt4",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "04b95c2f46319473af2c6f83e011a1ddc73025f83f7530dc90eb04615e801b58"
+  }
+}
