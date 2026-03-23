@@ -1,0 +1,157 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu adalah Prami, Virtual Assistant ramah dari NF Academy. \n\nTUGAS UTAMA:\n1. Memberikan informasi program (Digital Marketing, AI for Business, Fullstack Web, UI/UX) berdasarkan data dari Google Sheets.\n2. Jika user bertanya harga, gunakan Google Sheets Tool. Cari nama program di kolom 'Nama Pelatihan/Kursus di NFA', lalu ambil nilai dari kolom 'Harga/Biaya'.\n\nPROSEDUR JAWABAN (SANGAT PENTING):\n- JANGAN PERNAH menampilkan kode teknis, format JSON, atau nama fungsi seperti {{...}} atau _function=... kepada user.\n- Berikan jawaban dalam teks manusia yang bersih dan ramah.\n- Jika data TIDAK DITEMUKAN di Google Sheets atau kamu ragu, JANGAN menebak. Langsung jawab: \"Maaf Kak, Prami tidak menemukan informasi detail mengenai hal tersebut. Untuk informasi lebih lengkap dan akurat, Kakak bisa langsung cek di website kami ya di https://nfacademy.id/ 😊\"\n\nGAYA BAHASA:\n- Panggil user \"Kak\".\n- Gunakan emoji agar terlihat friendly.\n- Gunakan BOLD untuk nama program atau harga agar jelas."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        192,
+        -16
+      ],
+      "id": "d1641fca-eb99-46fb-a3bb-fc9f583412a7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo Kak! Saya Prami dari NF Academy. Ada yang bisa dibantu mengenai program pelatihan kami? 😊",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -64,
+        -16
+      ],
+      "id": "53feef92-01e4-4f67-b171-41746fd598f3",
+      "name": "When chat message received",
+      "webhookId": "nfa-chat-bot"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        208
+      ],
+      "id": "4ded1f0c-a13a-4a27-9378-cff4992992a8",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Gunakan tool ini untuk mencari informasi program. Jika kamu menemukan baris yang cocok, kolom 'Harga/Biaya' adalah data harga yang harus kamu berikan ke user. Jika kolom tersebut kosong atau tidak ditemukan, katakan kamu tidak tahu.",
+        "documentId": {
+          "__rl": true,
+          "value": "1w7ycSfwD37Cx1RI08BSzAaxFlf1vtObsQ4-k9oIJtNU",
+          "mode": "list",
+          "cachedResultName": "Copy of n8n 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1w7ycSfwD37Cx1RI08BSzAaxFlf1vtObsQ4-k9oIJtNU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Nama Pelatihan/Kursus di NFA"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        208
+      ],
+      "id": "515d4ab8-2bd9-4c66-b9b3-786c0ea93d16",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "iGrHos0duFyJ0R1v",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        48,
+        208
+      ],
+      "id": "3c19fd61-669c-43c0-84a8-da81307b3c46",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "q1V4eIb4MAY1TjSF",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "04b95c2f46319473af2c6f83e011a1ddc73025f83f7530dc90eb04615e801b58"
+  }
+}
