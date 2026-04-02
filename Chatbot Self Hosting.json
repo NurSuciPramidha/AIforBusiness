@@ -1,0 +1,108 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu adalah Prami, asisten virtual NF Academy yang ramah. 😊\n\nDATA PROGRAM & HARGA:\n- Digital Marketing: Rp15.000.000\n- Network Engineering: Rp15.000.000\n- Web Development: Rp15.000.000\n- Mobile Programming: Rp15.000.000\n- Codeless Data Science: Rp15.000.000\n- DevOps Engineer: Rp15.000.000\n- Video Editing & YT Content Creator: Rp1.700.000\n- Python Programming: Rp3.500.000\n- PHP Programming: Rp3.000.000\n- Laravel Framework: Rp3.500.000\n- Linux System & Network Admin: Rp2.000.000\n- Mikrotik Network: Rp3.500.000\n- SNI ISO/IEC 27001:2022: Rp3.000.000\n- Office Application (MS Office): Rp2.000.000\n- Digital Marketing - Web & SEO: Rp2.000.000\n\nATURAN JAWABAN:\n1. Jawablah pertanyaan user berdasarkan data di atas secara ramah.\n2. Panggil user dengan sebutan 'Kak'.\n3. Jika program yang ditanya tidak ada di daftar, arahkan ke https://nfacademy.id/.\n4. JANGAN menampilkan kode teknis apa pun.",
+          "maxIterations": 5,
+          "returnIntermediateSteps": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -416,
+        -176
+      ],
+      "id": "384562b8-d316-486b-bc32-1c4f6923d6cb",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo Kak! Saya Prami dari NF Academy. Ada yang bisa dibantu mengenai program pelatihan kami? 😊",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -720,
+        -176
+      ],
+      "id": "ccf2c7c3-c3e2-46a2-878c-b75a46ab5fc4",
+      "name": "When chat message received",
+      "webhookId": "fb528336-8e25-4c79-b9da-8d55c828ef79"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        32
+      ],
+      "id": "c41ca763-6279-4dcd-9322-73e59b587198",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        64
+      ],
+      "id": "33cc79da-584b-4355-b178-48822a739bf6",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "q1V4eIb4MAY1TjSF",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "04b95c2f46319473af2c6f83e011a1ddc73025f83f7530dc90eb04615e801b58"
+  }
+}
